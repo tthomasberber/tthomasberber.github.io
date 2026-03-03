@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thoto Barbero — Reservas</title>
+    <meta name="description"
+        content="Reservá tu turno en Thoto Barbero. Cortes premium, atención personalizada en Villa Ballester.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- ==================== HERO SECTION ==================== -->
+    <section id="hero" class="screen hero-screen">
+        <div class="hero-bg-gradient"></div>
+        <div class="hero-content">
+            <h1 class="hero-title typewriter" data-text="THOTO BARBERO"></h1>
+            <p class="hero-subtitle">EXPERIENCIA PREMIUM EN BARBERÍA</p>
+            <button class="glassy-btn hero-cta" onclick="scrollToSection('location')">
+                <span class="btn-glow"></span>
+                <span class="btn-text">RESERVAR TURNO</span>
+            </button>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- ==================== LOCATION SECTION ==================== -->
+    <section id="location" class="screen location-screen">
+        <div class="location-card" id="locationCard">
+            <div class="location-grid-overlay"></div>
+            <div class="location-header">
+                <div class="location-live">
+                    <span class="live-dot"></span>
+                    <span>Live</span>
+                </div>
+                <div class="location-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </div>
+            </div>
+            <div class="location-body">
+                <h2 class="location-name typewriter" data-text="VILLA BALLESTER"></h2>
+                <p class="location-coords">-34.5453° S, -58.5548° W</p>
+                <p class="location-address">Int. Witcomb 2697, B1653</p>
+                <p class="location-address">Villa Ballester, Buenos Aires</p>
+            </div>
+            <div class="location-footer">
+                <a href="https://maps.google.com/?q=Int.+Witcomb+2697,+B1653+Villa+Ballester" target="_blank"
+                    class="location-map-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                    Abrir en Maps
+                </a>
+            </div>
+        </div>
+        <button class="glassy-btn location-cta" onclick="startBooking()">
+            <span class="btn-glow"></span>
+            <span class="btn-text">COMENZAR RESERVA</span>
+        </button>
+    </section>
+
+    <!-- ==================== BOOKING FLOW ==================== -->
+    <div id="bookingOverlay" class="booking-overlay">
+        <div class="booking-container">
+            <!-- Progress bar -->
+            <div class="booking-progress">
+                <div class="progress-bar" id="progressBar"></div>
+                <div class="progress-steps">
+                    <span class="step active" data-step="1">Servicio</span>
+                    <span class="step" data-step="2">Fecha</span>
+                    <span class="step" data-step="3">Horario</span>
+                </div>
+            </div>
+
+            <!-- STEP 1: Services -->
+            <div class="booking-step active" id="step1">
+                <h2 class="step-title typewriter" data-text="ELEGÍ TU SERVICIO"></h2>
+                <p class="step-subtitle">Seleccioná el servicio que deseas</p>
+
+                <div class="services-grid">
+                    <!-- Corte + Barba -->
+                    <div class="service-card" data-service="Corte + Barba" data-price="13500">
+                        <div class="service-header">
+                            <h3 class="service-name">CORTE +<br>BARBA</h3>
+                            <div class="service-price">
+                                <span class="price-symbol">$</span>
+                                <span class="price-digits stagger-price" data-value="13500"></span>
+                            </div>
+                        </div>
+                        <div class="service-features">
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Corte de pelo</div>
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Perfilado de cejas</div>
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Perfilado y afeitado de barba</div>
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Aplicación de productos premium</div>
+                        </div>
+                    </div>
+
+                    <!-- Corte Básico -->
+                    <div class="service-card" data-service="Corte Básico" data-price="12000">
+                        <div class="service-header">
+                            <h3 class="service-name">CORTE<br>BÁSICO</h3>
+                            <div class="service-price">
+                                <span class="price-symbol">$</span>
+                                <span class="price-digits stagger-price" data-value="12000"></span>
+                            </div>
+                        </div>
+                        <div class="service-features">
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Corte de pelo</div>
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Perfilado de cejas</div>
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Aplicación de productos premium</div>
+                        </div>
+                    </div>
+
+                    <!-- Corte a Domicilio -->
+                    <div class="service-card" data-service="Corte a Domicilio" data-price="16500">
+                        <div class="service-header">
+                            <h3 class="service-name">CORTE A<br>DOMICILIO</h3>
+                            <div class="service-price">
+                                <span class="price-symbol">$</span>
+                                <span class="price-digits stagger-price" data-value="16500"></span>
+                                <span class="price-min">MÍNIMO</span>
+                            </div>
+                        </div>
+                        <div class="service-features">
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Corte de pelo</div>
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Perfilado de cejas</div>
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Perfilado y afeitado de barba</div>
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Aplicación de productos premium</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: Date -->
+            <div class="booking-step" id="step2">
+                <h2 class="step-title typewriter" data-text="ELEGÍ LA FECHA"></h2>
+                <p class="step-subtitle">Solo días de semana (lunes a viernes)</p>
+                <div class="calendar-container" id="calendarContainer"></div>
+            </div>
+
+            <!-- STEP 3: Time -->
+            <div class="booking-step" id="step3">
+                <h2 class="step-title typewriter" data-text="ELEGÍ EL HORARIO"></h2>
+                <p class="step-subtitle">Turnos disponibles para <span id="selectedDateText"></span></p>
+                <div class="timeslots-grid" id="timeslotsGrid"></div>
+                <button class="glassy-btn finalize-btn" id="finalizeBtn" onclick="showConfirmation()" disabled>
+                    <span class="btn-glow"></span>
+                    <span class="btn-text">FINALIZAR RESERVA</span>
+                </button>
+            </div>
+
+            <!-- Back button -->
+            <button class="back-btn" id="backBtn" onclick="goBack()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+                Volver
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== CONFIRMATION MODAL ==================== -->
+    <div id="confirmationModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 class="modal-title">CONFIRMAR RESERVA</h2>
+                <button class="modal-close" onclick="closeConfirmation()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-detail">
+                    <span class="confirm-label">Servicio</span>
+                    <span class="confirm-value" id="confirmService"></span>
+                </div>
+                <div class="confirm-detail">
+                    <span class="confirm-label">Precio</span>
+                    <span class="confirm-value" id="confirmPrice"></span>
+                </div>
+                <div class="confirm-detail">
+                    <span class="confirm-label">Fecha</span>
+                    <span class="confirm-value" id="confirmDate"></span>
+                </div>
+                <div class="confirm-detail">
+                    <span class="confirm-label">Horario</span>
+                    <span class="confirm-value" id="confirmTime"></span>
+                </div>
+            </div>
+            <button class="glassy-btn confirm-btn" onclick="confirmBooking()">
+                <span class="btn-glow"></span>
+                <span class="btn-text">CONFIRMAR VÍA WHATSAPP</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
