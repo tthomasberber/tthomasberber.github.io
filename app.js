@@ -5,6 +5,8 @@ const state = {
     selectedPrice: null,
     selectedDate: null,
     selectedTime: null,
+    clientName: '',
+    clientSurname: '',
     calendarMonth: new Date().getMonth(),
     calendarYear: new Date().getFullYear(),
 };
@@ -23,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initServiceCards();
     initStaggeredPrices();
     cleanOldReservations();
-    initTextCarousel();
 });
 
 // ===== TYPEWRITER EFFECT =====
@@ -212,10 +213,17 @@ function resetBookingState() {
     state.selectedPrice = null;
     state.selectedDate = null;
     state.selectedTime = null;
+    state.clientName = '';
+    state.clientSurname = '';
     document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
     document.querySelectorAll('.booking-step .step-title').forEach(t => {
         t.dataset.reanimated = '';
     });
+    // Reset inputs
+    const nameInput = document.getElementById('clientName');
+    const surnameInput = document.getElementById('clientSurname');
+    if (nameInput) nameInput.value = '';
+    if (surnameInput) surnameInput.value = '';
 }
 
 function goToStep(step) {
@@ -227,6 +235,8 @@ function goToStep(step) {
         buildCalendar();
     } else if (step === 3) {
         buildTimeslots();
+    } else if (step === 4) {
+        initClientForm();
     }
 }
 
@@ -260,7 +270,10 @@ function goBack() {
     if (state.currentStep === 1) {
         closeBooking();
     } else {
-        if (state.currentStep === 3) {
+        if (state.currentStep === 4) {
+            state.clientName = '';
+            state.clientSurname = '';
+        } else if (state.currentStep === 3) {
             state.selectedTime = null;
         } else if (state.currentStep === 2) {
             state.selectedDate = null;
@@ -399,13 +412,36 @@ function selectTimeslot(slot) {
     document.getElementById('finalizeBtn').disabled = false;
 }
 
+// ===== CLIENT FORM =====
+function initClientForm() {
+    const nameInput = document.getElementById('clientName');
+    const surnameInput = document.getElementById('clientSurname');
+    const btn = document.getElementById('finalizeBtnData');
+
+    // Restore values if going back
+    if (state.clientName) nameInput.value = state.clientName;
+    if (state.clientSurname) surnameInput.value = state.clientSurname;
+
+    function checkName() {
+        state.clientName = nameInput.value.trim();
+        state.clientSurname = surnameInput.value.trim();
+        btn.disabled = state.clientName.length === 0;
+    }
+
+    nameInput.addEventListener('input', checkName);
+    surnameInput.addEventListener('input', checkName);
+    checkName();
+}
+
 // ===== CONFIRMATION =====
 function showConfirmation() {
-    if (!state.selectedService || !state.selectedDate || !state.selectedTime) return;
+    if (!state.selectedService || !state.selectedDate || !state.selectedTime || !state.clientName) return;
 
     const modal = document.getElementById('confirmationModal');
+    const fullName = state.clientSurname ? `${state.clientName} ${state.clientSurname}` : state.clientName;
+    document.getElementById('confirmClient').textContent = fullName;
     document.getElementById('confirmService').textContent = state.selectedService;
-    document.getElementById('confirmPrice').textContent = `$${state.selectedPrice.toLocaleString('es-AR')}${state.selectedService === 'Corte a Domicilio' ? ' (mínimo)' : ''}`;
+    document.getElementById('confirmPrice').textContent = `$${state.selectedPrice.toLocaleString('es-AR')}${state.selectedService === 'Corte a Domicilio' ? ' (minimo)' : ''}`;
     document.getElementById('confirmDate').textContent = `${DAYS_FULL[state.selectedDate.getDay()]} ${state.selectedDate.getDate()} de ${MONTHS_ES[state.selectedDate.getMonth()]} ${state.selectedDate.getFullYear()}`;
     document.getElementById('confirmTime').textContent = state.selectedTime + ' hs';
 
@@ -424,10 +460,11 @@ function confirmBooking() {
     saveReservation(formatDateKey(state.selectedDate), state.selectedTime);
 
     // Build WhatsApp message
+    const fullName = state.clientSurname ? `${state.clientName} ${state.clientSurname}` : state.clientName;
     const dateStr = `${DAYS_FULL[state.selectedDate.getDay()]} ${state.selectedDate.getDate()} de ${MONTHS_ES[state.selectedDate.getMonth()]} ${state.selectedDate.getFullYear()}`;
-    const priceStr = `$${state.selectedPrice.toLocaleString('es-AR')}${state.selectedService === 'Corte a Domicilio' ? ' (mínimo)' : ''}`;
+    const priceStr = `$${state.selectedPrice.toLocaleString('es-AR')}${state.selectedService === 'Corte a Domicilio' ? ' (minimo)' : ''}`;
 
-    const message = `¡Hola! Quiero confirmar mi reserva en *Thoto Barbero* 💈\n\n📋 *Servicio:* ${state.selectedService}\n💰 *Precio:* ${priceStr}\n📅 *Fecha:* ${dateStr}\n🕐 *Horario:* ${state.selectedTime} hs\n\n¡Gracias!`;
+    const message = `Hola, quiero confirmar mi reserva en Thoto Barbero.\n\n- Cliente: ${fullName}\n- Servicio: ${state.selectedService}\n- Precio: ${priceStr}\n- Fecha: ${dateStr}\n- Horario: ${state.selectedTime} hs\n\nGracias.`;
 
     const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');
@@ -490,22 +527,4 @@ function formatDateKey(date) {
     return `${y}-${m}-${d}`;
 }
 
-// ===== TEXT CAROUSEL =====
-function initTextCarousel() {
-    const carousels = document.querySelectorAll('.text-carousel-btn');
-    carousels.forEach(carousel => {
-        const track = carousel.querySelector('.carousel-track');
-        const items = track.querySelectorAll('.carousel-item');
-        if (items.length <= 1) return;
 
-        let currentIndex = 0;
-        const itemHeight = items[0].offsetHeight || 19; // fallback
-
-        setInterval(() => {
-            items[currentIndex].classList.remove('active');
-            currentIndex = (currentIndex + 1) % items.length;
-            items[currentIndex].classList.add('active');
-            track.style.transform = `translateY(-${currentIndex * itemHeight}px)`;
-        }, 2500);
-    });
-}
