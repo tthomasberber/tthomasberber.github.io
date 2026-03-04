@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initServiceCards();
     initStaggeredPrices();
     cleanOldReservations();
+    initTextCarousel();
 });
 
 // ===== TYPEWRITER EFFECT =====
@@ -487,4 +488,24 @@ function formatDateKey(date) {
     const m = String(date.getMonth() + 1).padStart(2, '0');
     const d = String(date.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
+}
+
+// ===== TEXT CAROUSEL =====
+function initTextCarousel() {
+    const carousels = document.querySelectorAll('.text-carousel-btn');
+    carousels.forEach(carousel => {
+        const track = carousel.querySelector('.carousel-track');
+        const items = track.querySelectorAll('.carousel-item');
+        if (items.length <= 1) return;
+
+        let currentIndex = 0;
+        const itemHeight = items[0].offsetHeight || 19; // fallback
+
+        setInterval(() => {
+            items[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % items.length;
+            items[currentIndex].classList.add('active');
+            track.style.transform = `translateY(-${currentIndex * itemHeight}px)`;
+        }, 2500);
+    });
 }
