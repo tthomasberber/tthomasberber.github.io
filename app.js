@@ -11,7 +11,6 @@ const state = {
     calendarYear: new Date().getFullYear(),
 };
 
-const TIMESLOTS = ['14:00', '14:45', '15:30', '16:15', '17:00', '17:45', '18:30', '19:15'];
 const WHATSAPP_NUMBER = '5491150006396';
 const STORAGE_KEY = 'thoto_reservas';
 const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -320,7 +319,7 @@ function buildCalendar() {
         const date = new Date(year, month, d);
         const dayOfWeek = date.getDay();
         const isPast = date < today;
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const isWeekend = dayOfWeek === 0;
         const isToday = date.getTime() === today.getTime();
         const isDisabled = isPast || isWeekend;
 
@@ -369,8 +368,12 @@ function buildTimeslots() {
 
     dateText.textContent = `${DAYS_FULL[state.selectedDate.getDay()]} ${state.selectedDate.getDate()} de ${MONTHS_ES[state.selectedDate.getMonth()]}`;
 
+    const timeslotsForDay = state.selectedDate.getDay() === 6
+        ? ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00']
+        : ['13:30', '14:30', '15:30', '16:30', '17:30', '18:30', '19:30'];
+
     grid.innerHTML = '';
-    TIMESLOTS.forEach((slot, i) => {
+    timeslotsForDay.forEach((slot, i) => {
         const isReserved = reserved.includes(slot);
         const isSelected = state.selectedTime === slot;
 
@@ -437,11 +440,16 @@ function initClientForm() {
 function showConfirmation() {
     if (!state.selectedService || !state.selectedDate || !state.selectedTime || !state.clientName) return;
 
+    let transferPriceStr = '';
+    if (state.selectedService === 'Corte + Barba') transferPriceStr = ' (Transf: $16.000)';
+    else if (state.selectedService === 'Corte Básico') transferPriceStr = ' (Transf: $14.000)';
+    else if (state.selectedService === 'Barba') transferPriceStr = ' (Transf: $10.000)';
+
     const modal = document.getElementById('confirmationModal');
     const fullName = state.clientSurname ? `${state.clientName} ${state.clientSurname}` : state.clientName;
     document.getElementById('confirmClient').textContent = fullName;
     document.getElementById('confirmService').textContent = state.selectedService;
-    document.getElementById('confirmPrice').textContent = `$${state.selectedPrice.toLocaleString('es-AR')}${state.selectedService === 'Corte a Domicilio' ? ' (minimo)' : ''}`;
+    document.getElementById('confirmPrice').textContent = `$${state.selectedPrice.toLocaleString('es-AR')}${state.selectedService === 'Corte a Domicilio' ? ' (minimo)' : ''}${transferPriceStr}`;
     document.getElementById('confirmDate').textContent = `${DAYS_FULL[state.selectedDate.getDay()]} ${state.selectedDate.getDate()} de ${MONTHS_ES[state.selectedDate.getMonth()]} ${state.selectedDate.getFullYear()}`;
     document.getElementById('confirmTime').textContent = state.selectedTime + ' hs';
 
@@ -459,10 +467,15 @@ function confirmBooking() {
     // Save reservation to localStorage
     saveReservation(formatDateKey(state.selectedDate), state.selectedTime);
 
+    let transferPriceStr = '';
+    if (state.selectedService === 'Corte + Barba') transferPriceStr = ' (Transf: $16.000)';
+    else if (state.selectedService === 'Corte Básico') transferPriceStr = ' (Transf: $14.000)';
+    else if (state.selectedService === 'Barba') transferPriceStr = ' (Transf: $10.000)';
+
     // Build WhatsApp message
     const fullName = state.clientSurname ? `${state.clientName} ${state.clientSurname}` : state.clientName;
     const dateStr = `${DAYS_FULL[state.selectedDate.getDay()]} ${state.selectedDate.getDate()} de ${MONTHS_ES[state.selectedDate.getMonth()]} ${state.selectedDate.getFullYear()}`;
-    const priceStr = `$${state.selectedPrice.toLocaleString('es-AR')}${state.selectedService === 'Corte a Domicilio' ? ' (minimo)' : ''}`;
+    const priceStr = `$${state.selectedPrice.toLocaleString('es-AR')}${state.selectedService === 'Corte a Domicilio' ? ' (minimo)' : ''}${transferPriceStr}`;
 
     const message = `Hola, quiero confirmar mi reserva en Thoto Barbero.\n\n- Cliente: ${fullName}\n- Servicio: ${state.selectedService}\n- Precio: ${priceStr}\n- Fecha: ${dateStr}\n- Horario: ${state.selectedTime} hs\n\nGracias.`;
 

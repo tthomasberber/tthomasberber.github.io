@@ -50,13 +50,12 @@
             </div>
             <div class="location-body">
                 <h2 class="location-name typewriter" data-text="VILLA BALLESTER"></h2>
-                <p class="location-coords">-34.5453° S, -58.5548° W</p>
-                <p class="location-address">Int. Witcomb 2697, B1653</p>
-                <p class="location-address">Villa Ballester, Buenos Aires</p>
+                <p class="location-coords">Independencia 4617</p>
+                <p class="location-address">B1653 Villa Ballester</p>
+                <p class="location-address">Provincia de Buenos Aires</p>
             </div>
             <div class="location-footer">
-                <a href="https://maps.google.com/?q=Int.+Witcomb+2697,+B1653+Villa+Ballester" target="_blank"
-                    class="location-map-link">
+                <a href="https://maps.app.goo.gl/AagaQiRCBgeXB1mBA" target="_blank" class="location-map-link">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                         <polyline points="15 3 21 3 21 9" />
@@ -93,12 +92,15 @@
 
                 <div class="services-grid">
                     <!-- Corte + Barba -->
-                    <div class="service-card" data-service="Corte + Barba" data-price="13500">
+                    <div class="service-card" data-service="Corte + Barba" data-price="14000">
                         <div class="service-header">
                             <h3 class="service-name">CORTE +<br>BARBA</h3>
                             <div class="service-price">
-                                <span class="price-symbol">$</span>
-                                <span class="price-digits stagger-price" data-value="13500"></span>
+                                <div style="display: flex; align-items: baseline; gap: 2px;">
+                                    <span class="price-symbol">$</span>
+                                    <span class="price-digits stagger-price" data-value="14000"></span>
+                                </div>
+                                <span class="price-transfer">Transf: $16.000</span>
                             </div>
                         </div>
                         <div class="service-features">
@@ -126,8 +128,11 @@
                         <div class="service-header">
                             <h3 class="service-name">CORTE<br>BÁSICO</h3>
                             <div class="service-price">
-                                <span class="price-symbol">$</span>
-                                <span class="price-digits stagger-price" data-value="12000"></span>
+                                <div style="display: flex; align-items: baseline; gap: 2px;">
+                                    <span class="price-symbol">$</span>
+                                    <span class="price-digits stagger-price" data-value="12000"></span>
+                                </div>
+                                <span class="price-transfer">Transf: $14.000</span>
                             </div>
                         </div>
                         <div class="service-features">
@@ -146,13 +151,43 @@
                         </div>
                     </div>
 
+                    <!-- Barba -->
+                    <div class="service-card" data-service="Barba" data-price="8000">
+                        <div class="service-header">
+                            <h3 class="service-name">BARBA</h3>
+                            <div class="service-price">
+                                <div style="display: flex; align-items: baseline; gap: 2px;">
+                                    <span class="price-symbol">$</span>
+                                    <span class="price-digits stagger-price" data-value="8000"></span>
+                                </div>
+                                <span class="price-transfer">Transf: $10.000</span>
+                            </div>
+                        </div>
+                        <div class="service-features">
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Perfilado de cejas</div>
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Perfilado y afeitado de barba</div>
+                            <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#00d4aa" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Aplicación de productos premium</div>
+                        </div>
+                    </div>
+
                     <!-- Corte a Domicilio -->
                     <div class="service-card" data-service="Corte a Domicilio" data-price="16500">
                         <div class="service-header">
                             <h3 class="service-name">CORTE A<br>DOMICILIO</h3>
                             <div class="service-price">
-                                <span class="price-symbol">$</span>
-                                <span class="price-digits stagger-price" data-value="16500"></span>
+                                <div style="display: flex; align-items: baseline; gap: 2px;">
+                                    <span class="price-symbol">$</span>
+                                    <span class="price-digits stagger-price" data-value="16500"></span>
+                                </div>
                                 <span class="price-min">MÍNIMO</span>
                             </div>
                         </div>
@@ -181,7 +216,7 @@
             <!-- STEP 2: Date -->
             <div class="booking-step" id="step2">
                 <h2 class="step-title typewriter" data-text="ELEGÍ LA FECHA"></h2>
-                <p class="step-subtitle">Solo días de semana (lunes a viernes)</p>
+                <p class="step-subtitle">De lunes a sábados</p>
                 <div class="calendar-container" id="calendarContainer"></div>
             </div>
 

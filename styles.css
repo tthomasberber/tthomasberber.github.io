@@ -115,7 +115,7 @@ body {
 .hero-title {
     font-family: var(--font-primary);
     font-weight: 900;
-    font-size: clamp(3rem, 10vw, 6rem);
+    font-size: clamp(2rem, 6.6vw, 4rem);
     letter-spacing: -0.02em;
     line-height: 1;
     background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.7) 100%);
@@ -629,6 +629,13 @@ body {
     font-style: italic;
     color: var(--text-muted);
     letter-spacing: 0.15em;
+}
+
+.price-transfer {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
 }
 
 .service-features {
