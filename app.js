@@ -12,6 +12,7 @@ const state = {
 };
 
 const WHATSAPP_NUMBER = '5491150006396';
+const APPS_SCRIPT_URL = '';
 const STORAGE_KEY = 'thoto_reservas';
 const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const DAYS_ES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -357,20 +358,48 @@ function selectDate(year, month, day) {
 }
 
 // ===== TIME SLOTS =====
-function buildTimeslots() {
+async function buildTimeslots() {
     const grid = document.getElementById('timeslotsGrid');
     const dateText = document.getElementById('selectedDateText');
+    const btn = document.getElementById('finalizeBtn');
 
     if (!state.selectedDate) return;
 
     const dateKey = formatDateKey(state.selectedDate);
-    const reserved = getReservedSlots(dateKey);
-
     dateText.textContent = `${DAYS_FULL[state.selectedDate.getDay()]} ${state.selectedDate.getDate()} de ${MONTHS_ES[state.selectedDate.getMonth()]}`;
 
     const timeslotsForDay = state.selectedDate.getDay() === 6
         ? ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00']
         : ['13:30', '14:30', '15:30', '16:30', '17:30', '18:30', '19:30'];
+
+    // Show Loader
+    grid.innerHTML = '<div class="loader-container"><div class="spinner"></div><p>Cargando disponibilidad...</p></div>';
+    btn.disabled = true;
+
+    let reserved = [];
+    if (!APPS_SCRIPT_URL) {
+        reserved = getReservedSlots(dateKey);
+        // Fake delay for demo
+        await new Promise(r => setTimeout(r, 600));
+    } else {
+        try {
+            const resp = await fetch(`${APPS_SCRIPT_URL}?fecha=${dateKey}`);
+            const result = await resp.json();
+            
+            // support both formats: raw array or {ok:true, ocupados:[]}
+            if (Array.isArray(result)) {
+                reserved = result;
+            } else if (result.ocupados && Array.isArray(result.ocupados)) {
+                reserved = result.ocupados;
+            } else {
+                reserved = [];
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Error al cargar horarios. Por favor intentá de nuevo.");
+            reserved = [];
+        }
+    }
 
     grid.innerHTML = '';
     timeslotsForDay.forEach((slot, i) => {
@@ -400,7 +429,6 @@ function buildTimeslots() {
     });
 
     // Reset finalize button
-    const btn = document.getElementById('finalizeBtn');
     btn.disabled = !state.selectedTime;
 }
 
@@ -440,16 +468,11 @@ function initClientForm() {
 function showConfirmation() {
     if (!state.selectedService || !state.selectedDate || !state.selectedTime || !state.clientName) return;
 
-    let transferPriceStr = '';
-    if (state.selectedService === 'Corte + Barba') transferPriceStr = ' (Transf: $16.000)';
-    else if (state.selectedService === 'Corte Básico') transferPriceStr = ' (Transf: $14.000)';
-    else if (state.selectedService === 'Barba') transferPriceStr = ' (Transf: $10.000)';
-
     const modal = document.getElementById('confirmationModal');
     const fullName = state.clientSurname ? `${state.clientName} ${state.clientSurname}` : state.clientName;
     document.getElementById('confirmClient').textContent = fullName;
     document.getElementById('confirmService').textContent = state.selectedService;
-    document.getElementById('confirmPrice').textContent = `$${state.selectedPrice.toLocaleString('es-AR')}${state.selectedService === 'Corte a Domicilio' ? ' (minimo)' : ''}${transferPriceStr}`;
+    document.getElementById('confirmPrice').textContent = `$${state.selectedPrice.toLocaleString('es-AR')}${state.selectedService === 'Corte a Domicilio' ? ' (minimo)' : ''}`;
     document.getElementById('confirmDate').textContent = `${DAYS_FULL[state.selectedDate.getDay()]} ${state.selectedDate.getDate()} de ${MONTHS_ES[state.selectedDate.getMonth()]} ${state.selectedDate.getFullYear()}`;
     document.getElementById('confirmTime').textContent = state.selectedTime + ' hs';
 
@@ -463,28 +486,113 @@ function closeConfirmation() {
     setTimeout(() => modal.style.display = 'none', 300);
 }
 
-function confirmBooking() {
-    // Save reservation to localStorage
-    saveReservation(formatDateKey(state.selectedDate), state.selectedTime);
+async function confirmBooking() {
+    const confirmBtn = document.getElementById('chatBtnConfirm');
+    const btnText = document.getElementById('chatBtnText');
+    const originalText = btnText.textContent;
 
-    let transferPriceStr = '';
-    if (state.selectedService === 'Corte + Barba') transferPriceStr = ' (Transf: $16.000)';
-    else if (state.selectedService === 'Corte Básico') transferPriceStr = ' (Transf: $14.000)';
-    else if (state.selectedService === 'Barba') transferPriceStr = ' (Transf: $10.000)';
+    btnText.textContent = "Procesando...";
+    confirmBtn.style.pointerEvents = 'none';
+    confirmBtn.style.opacity = '0.7';
 
-    // Build WhatsApp message
     const fullName = state.clientSurname ? `${state.clientName} ${state.clientSurname}` : state.clientName;
+    const isSuccess = await processBooking(fullName);
+
+    btnText.textContent = originalText;
+    confirmBtn.style.pointerEvents = 'auto';
+    confirmBtn.style.opacity = '1';
+
+    if (isSuccess) {
+        closeConfirmation();
+        setTimeout(() => showSuccessScreen(), 300);
+    }
+}
+
+async function processBooking(fullName) {
+    if (!APPS_SCRIPT_URL) {
+        // Fallback local mode
+        saveReservation(formatDateKey(state.selectedDate), state.selectedTime);
+        await new Promise(r => setTimeout(r, 1000));
+        return true;
+    }
+
+    try {
+        const payload = {
+            nombre: fullName,
+            servicio: state.selectedService,
+            fecha: formatDateKey(state.selectedDate),
+            horario: state.selectedTime,
+            precio: state.selectedPrice
+        };
+
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8',
+            },
+            body: JSON.stringify(payload)
+        });
+
+        let result;
+        try {
+            result = await response.json();
+        } catch (parseError) {
+            console.error("Error al leer JSON del Apps Script:", parseError);
+            alert("La reserva se envió, pero el servidor no respondió con un JSON válido. Revisa el código del backend.");
+            return false;
+        }
+        
+        if (result.ok) {
+            return true;
+        } else {
+            if (result.error && result.error.toLowerCase().includes("ya fue reservado")) {
+                alert("Ese horario ya fue reservado. Por favor elegí otro.");
+                closeConfirmation();
+                goToStep(3);
+                return false;
+            } else {
+                alert("Hubo un problema al procesar la reserva: " + (result.error || "Error desconocido"));
+                return false;
+            }
+        }
+    } catch (e) {
+        console.error("Fetch Network o CORS Error:", e);
+        alert("Ocurrió un error al conectar con el servidor (Posible error de CORS o URL inválida). Por favor revisá la consola F12.");
+        return false;
+    }
+}
+
+function showSuccessScreen() {
     const dateStr = `${DAYS_FULL[state.selectedDate.getDay()]} ${state.selectedDate.getDate()} de ${MONTHS_ES[state.selectedDate.getMonth()]} ${state.selectedDate.getFullYear()}`;
-    const priceStr = `$${state.selectedPrice.toLocaleString('es-AR')}${state.selectedService === 'Corte a Domicilio' ? ' (minimo)' : ''}${transferPriceStr}`;
+    const modal = document.getElementById('successModal');
+    
+    document.getElementById('successClient').textContent = state.clientSurname ? `${state.clientName} ${state.clientSurname}` : state.clientName;
+    document.getElementById('successService').textContent = state.selectedService;
+    document.getElementById('successDate').textContent = dateStr;
+    document.getElementById('successTime').textContent = state.selectedTime + ' hs';
 
-    const message = `Hola, quiero confirmar mi reserva en Thoto Barbero.\n\n- Cliente: ${fullName}\n- Servicio: ${state.selectedService}\n- Precio: ${priceStr}\n- Fecha: ${dateStr}\n- Horario: ${state.selectedTime} hs\n\nGracias.`;
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => modal.classList.add('open'));
+}
 
+function closeSuccessScreen() {
+    const modal = document.getElementById('successModal');
+    modal.classList.remove('open');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        closeBooking();
+    }, 300);
+}
+
+function confirmViaWhatsApp() {
+    const fullName = state.clientSurname ? `${state.clientName} ${state.clientSurname}` : state.clientName;
+    const dateStr = `${DAYS_FULL[state.selectedDate.getDay()]} ${state.selectedDate.getDate()}/${String(state.selectedDate.getMonth()+1).padStart(2,'0')}/${state.selectedDate.getFullYear()}`;
+    
+    const message = `Hola! Reservé un turno:\n👤 ${fullName}\n📋 ${state.selectedService}\n📅 ${dateStr}\n🕐 ${state.selectedTime} hs`;
+    
     const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');
-
-    // Close everything
-    closeConfirmation();
-    closeBooking();
+    closeSuccessScreen();
 }
 
 // ===== LOCAL STORAGE =====

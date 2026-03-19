@@ -63,6 +63,33 @@ body {
     border-radius: 3px;
 }
 
+/* ===== LOADERS ===== */
+.loader-container {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 0;
+    gap: 16px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 /* ===== SCREEN SECTIONS ===== */
 .screen {
     min-height: 100vh;
@@ -633,11 +660,17 @@ body {
 
 .price-transfer {
     font-family: var(--font-body);
-    font-size: 0.65rem;
+    font-size: 0.8rem;
     font-weight: 500;
     font-style: italic;
     color: var(--text-muted);
     margin-top: 2px;
+}
+
+@media (max-width: 480px) {
+    .price-transfer {
+        font-size: 0.6rem;
+    }
 }
 
 .service-features {
