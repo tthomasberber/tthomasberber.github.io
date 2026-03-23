@@ -12,7 +12,7 @@ const state = {
 };
 
 const WHATSAPP_NUMBER = '5491150006396';
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfhL5tFDQrcGptXB8e1ZaR6m5eSL1vyZ99MqZoJruCTaU5P7EZ_KhZXsQU9l2ZGqDxuQ/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhm8E91MrsldE94SG2cvA1aKC3MQ8XsXtQZqNBFN4YgfggtYJJ77rZN-sKHXjIUn1PJA/exec';
 const STORAGE_KEY = 'thoto_reservas';
 const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const DAYS_ES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
