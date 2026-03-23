@@ -1,4 +1,4 @@
-const CALENDAR_ID = "2ed7f8893370ae65002b6fa1cf712257ab9cef1bc2a93072cd951eeaac6dce03@group.calendar.google.comI";
+const CALENDAR_ID = "2ed7f8893370ae65002b6fa1cf712257ab9cef1bc2a93072cd951eeaac6dce03@group.calendar.google.com";
 
 function doGet(e) {
   const fecha = e.parameter.fecha;
